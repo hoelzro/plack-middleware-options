@@ -6,6 +6,8 @@ use parent 'Plack::Middleware';
 
 our $VERSION = '0.01';
 
+my @HTTP_METHODS = qw/CONNECT DELETE GET HEAD POST PUT TRACE/;
+
 sub prepare_app {
     my ( $self ) = @_;
 
@@ -14,11 +16,7 @@ sub prepare_app {
         $allowed = { map { $_ => 1 } @$allowed };
     } elsif(ref $allowed ne 'HASH') {
         $allowed = {
-            DELETE => 1,
-            GET    => 1,
-            HEAD   => 1,
-            POST   => 1,
-            PUT    => 1,
+            map { $_ => 1 } @HTTP_METHODS,
         };
     }
     $self->{'allowed'} = $allowed;
@@ -30,9 +28,17 @@ sub call {
     my $method = $env->{'REQUEST_METHOD'};
 
     if($method eq 'OPTIONS') {
+        my @allowed;
+
+        if($env->{'REQUEST_URI'} eq '*') {
+            @allowed = @HTTP_METHODS;
+        } else {
+            @allowed = keys %{ $self->{'allowed'} };
+        }
+
         return [
             200,
-            ['Allow' => join(', ', keys %{ $self->{'allowed'} })],
+            ['Allow' => join(', ', @allowed)],
             [],
         ];
     } elsif(exists $self->{'allowed'}{$method}) {
@@ -40,7 +46,10 @@ sub call {
     } else {
         return [
             405,
-            ['Content-Type' => 'text/plain'],
+            [
+                'Allow'        => join(', ', keys %{ $self->{'allowed'} }),
+                'Content-Type' => 'text/plain',
+            ],
             ['Method not allowed'],
         ];
     }
