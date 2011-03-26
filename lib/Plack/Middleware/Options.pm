@@ -82,6 +82,14 @@ This module implements the OPTIONS HTTP method for your Plack application.
 It also returns a 405 Method Not Allowed error when a method not explicitly
 allowed is used.
 
+=head1 PARAMETERS
+
+=head2 allowed
+
+An array reference of allowed HTTP methods.  If omitted, defaults to all
+HTTP methods.  You can also use a hash reference, in which case the keys
+of the hash will be used.
+
 =head1 AUTHOR
 
 Rob Hoelz, C<< rob at hoelz.ro >>
