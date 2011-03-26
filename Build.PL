@@ -9,6 +9,7 @@ my $build = Module::Build->new(
     configure_requires => {
         'Module::Build' => 0,
     },
+    dist_author => 'Rob Hoelz <rob@hoelz.ro>',
     build_requires => {
         'Test::More'  => 0,
         'Plack::Test' => 0,
