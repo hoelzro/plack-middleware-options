@@ -6,6 +6,9 @@ use warnings;
 use Module::Build;
 
 my $build = Module::Build->new(
+    configure_requires => {
+        'Module::Build' => 0,
+    },
     build_requires => {
         'Test::More'  => 0,
         'Plack::Test' => 0,
